@@ -8,7 +8,7 @@ from datetime import datetime,timedelta
 from dateutil.relativedelta import relativedelta
 import json
 
-
+th=50
 def setToUrl(qbase64):
     return "https://fofa.so/api/v1/search/all?email="+username+"&key="+key+"&qbase64={"+qbase64+"}"
 
@@ -19,7 +19,11 @@ def query(qu,out):
     url=setToUrl(b64(qu))+"&size=10000&fields=ip,port,title,cert&page=1"
     rp=requests.get(url)
     result=rp.json()
-    print("query string: "+result["query"])
+    try:
+        print("query string: "+result["query"])
+    except KeyError:
+        click.secho("No result",fg="red")
+        exit(10)
     print("page: "+str(result['page']))
     # print("save size: "+str(result["size"]))
     click.secho("save size: "+str(result["size"]),fg="yellow")
@@ -60,13 +64,17 @@ def byPass(qu,ot):
         bf=af
 
 @click.group()
-def cli():
+@click.option("--thread",help="Thread(default 50)",metavar="need",default=50,type=int)
+def cli(thread):
     """
     python3 fofa.py fofaquery --queryString title="TSCEV4.0" --outPut x.txt
     python3 fofa.py checkurl --input target.txt --output output.txt --code False
 
     """
-
+    print(thread)
+    global th
+    th=thread
+    print(th)
     pass
 
 
@@ -88,8 +96,8 @@ def fofaquery(querystring,output,proxy=""):
     except Exception:
         print("proxy ERROR"
               "usage: --proxy http://127.0.0.1:8081")
-    "Chick "
-    getReal302.URLtest(filename,output,proxy=px)
+
+    getReal302.URLtest(filename, output, proxy=px, thread=th)
     click.secho("URL Check Finish".center(100, "*"), fg="green")
     print("Query original file:"+filename)
     print("Url check file out:"+output)
@@ -109,7 +117,7 @@ def checkurl(input,output,type,code,proxy=""):
         print("proxy ERROR"
               "usage: --proxy http://127.0.0.1:8081")
     click.secho("URL Check Start".center(100, "*"), fg="green")
-    getReal302.URLtest(input,output,type,code,proxy=px)
+    getReal302.URLtest(input, output, type, code, proxy=px,thread=th)
     click.secho("URL Check Finish".center(100, "*"), fg="green")
 
 if __name__ == '__main__':

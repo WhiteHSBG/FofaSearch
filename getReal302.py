@@ -4,6 +4,7 @@ from multiprocessing.dummy import Pool
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+
 ot=""
 #输出httpcode 开关
 codeSw=True
@@ -28,7 +29,7 @@ def curl(url):
         click.secho("[-] " + url.strip(),fg='red')
 
 
-def URLtest(input,out,fileType="url",code=False,proxy={}):
+def URLtest(input,out,fileType="url",code=False,proxy={},thread=50):
     global proxies
     proxies=proxy
     global ot
@@ -36,7 +37,8 @@ def URLtest(input,out,fileType="url",code=False,proxy={}):
     global codeSw
     codeSw=code
     if fileType=="url":
-        pool = Pool(50)
+
+        pool = Pool(thread)
         # 此处填写输入文件名输出文件名称
         linelist = []
         with open(input, 'r', encoding='utf-8') as f:
@@ -47,7 +49,7 @@ def URLtest(input,out,fileType="url",code=False,proxy={}):
 
             pool.map(curl, linelist)
     elif fileType=="xlsx":
-        pool = Pool(50)
+        pool = Pool(thread)
         # 此处填写输入文件名输出文件名称
         linelist = []
         with open(input, 'r', encoding='utf-8') as f:
@@ -64,7 +66,7 @@ def URLtest(input,out,fileType="url",code=False,proxy={}):
             pool.map(curl, linelist)
 
 if __name__ == "__main__":
-    URLtest("4.txt","output9.txt","xlsx")
+    URLtest("4.txt", "output9.txt", "xlsx")
 
 
 
