@@ -9,6 +9,7 @@ from dateutil.relativedelta import relativedelta
 import json
 
 th=50
+forceFlag=False
 def setToUrl(qbase64):
     return "https://fofa.so/api/v1/search/all?email="+username+"&key="+key+"&qbase64={"+qbase64+"}"
 
@@ -18,29 +19,37 @@ def query(qu,out):
     print("base64:"+b64(qu))
     url=setToUrl(b64(qu))+"&size=10000&fields=ip,port,title,cert&page=1"
     rp=requests.get(url)
+    print(rp.text)
     result=rp.json()
     try:
         print("query string: "+result["query"])
     except KeyError:
-        click.secho("No result",fg="red")
-        exit(10)
+        if forceFlag==True:
+            return 1
+        else:
+            click.secho("No result",fg="red")
+            exit(10)
     print("page: "+str(result['page']))
     # print("save size: "+str(result["size"]))
     click.secho("save size: "+str(result["size"]),fg="yellow")
-    if result["size"] ==0:
+    if result["size"] ==0 and forceFlag==False:
         return 0
-    result=result["results"]
-    with open(out,'a+',encoding='utf-8') as w:
+    else:
+        return 1
+    try:
+        result=result["results"]
+        with open(out,'a+',encoding='utf-8') as w:
 
-        for r in result:
-            ssl="http"
-            if r[3]:
-                ssl="https"
-            if r[2]=="":
-                w.write(ssl + "://" + r[0] + ":" + r[1] + "|" + "notitle" + "\n")
-            else:
-                w.write(ssl+"://"+r[0]+":"+r[1]+"|"+r[2]+"\n")
-
+            for r in result:
+                ssl="http"
+                if r[3]:
+                    ssl="https"
+                if r[2]=="":
+                    w.write(ssl + "://" + r[0] + ":" + r[1] + "|" + "notitle" + "\n")
+                else:
+                    w.write(ssl+"://"+r[0]+":"+r[1]+"|"+r[2]+"\n")
+    except Exception:
+        pass
 def byPass(qu,ot):
 
     now = datetime.now()
@@ -67,14 +76,12 @@ def byPass(qu,ot):
 @click.option("--thread",help="Thread(default 50)",metavar="need",default=50,type=int)
 def cli(thread):
     """
-    python3 fofa.py fofaquery --queryString title="TSCEV4.0" --outPut x.txt
+    python3 fofa.py fofaquery --querystring title="TSCEV4.0" --output x.txt
     python3 fofa.py checkurl --input target.txt --output output.txt --code False
 
     """
-    print(thread)
     global th
     th=thread
-    print(th)
     pass
 
 
@@ -82,7 +89,10 @@ def cli(thread):
 @click.option("--querystring",help="FOFA query string",metavar="need")
 @click.option("--output",help="Output File",metavar="need")
 @click.option("--proxy",help="Proxy usag: --proxy http://127.0.0.1:8081",metavar="option")
-def fofaquery(querystring,output,proxy=""):
+@click.option("--force",help="while result size is 0 still continue usage:--force=True(default False)",metavar="option",type=bool)
+def fofaquery(querystring,output,proxy="",force=False):
+    global forceFlag
+    forceFlag=force
     click.secho("FOFA Query Start".center(100, "*"),fg="green")
     now = datetime.now()
     filename = str(datetime.strftime(now, "%Y%m%d%H%M%S"))+".txt"

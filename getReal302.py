@@ -69,5 +69,3 @@ if __name__ == "__main__":
     URLtest("4.txt", "output9.txt", "xlsx")
 
 
-
-
