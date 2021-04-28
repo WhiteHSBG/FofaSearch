@@ -73,8 +73,8 @@ def byPass(qu,ot):
 @click.option("--thread",help="Thread(default 50)",metavar="need",default=50,type=int)
 def cli(thread):
     """
-    python3 fofa.py fofaquery --querystring title="TSCEV4.0" --output x.txt
-    python3 fofa.py checkurl --input target.txt --output output.txt --code False
+    python3 fofa.py fofaquery --querystring 'title="TSCEV4.0"' --output x.txt
+    python3 fofa.py checkurl --input target.txt --output output.txt
 
     """
     global th
