@@ -11,15 +11,14 @@ import json
 th=50
 forceFlag=False
 def setToUrl(qbase64):
-    return "https://fofa.so/api/v1/search/all?email="+username+"&key="+key+"&qbase64={"+qbase64+"}"
+    return "https://fofa.so/api/v1/search/all?email="+username+"&key="+key+"&qbase64="+qbase64
 
 def b64(st):
     return str(base64.b64encode(st.encode("utf-8")),"utf-8")
 def query(qu,out):
     print("base64:"+b64(qu))
     url=setToUrl(b64(qu))+"&size=10000&fields=ip,port,title,cert&page=1"
-    rp=requests.get(url)
-    print(rp.text)
+    rp=requests.get(url,verify=False)
     result=rp.json()
     try:
         print("query string: "+result["query"])
