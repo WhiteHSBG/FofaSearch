@@ -31,24 +31,22 @@ def query(qu,out):
     print("page: "+str(result['page']))
     # print("save size: "+str(result["size"]))
     click.secho("save size: "+str(result["size"]),fg="yellow")
-    if result["size"] ==0 and forceFlag==False:
+    if result["size"] ==0:
         return 0
-    else:
-        return 1
-    try:
-        result=result["results"]
-        with open(out,'a+',encoding='utf-8') as w:
 
-            for r in result:
-                ssl="http"
-                if r[3]:
-                    ssl="https"
-                if r[2]=="":
-                    w.write(ssl + "://" + r[0] + ":" + r[1] + "|" + "notitle" + "\n")
-                else:
-                    w.write(ssl+"://"+r[0]+":"+r[1]+"|"+r[2]+"\n")
-    except Exception:
-        pass
+    result=result["results"]
+
+    with open(out,'a+',encoding='utf-8') as w:
+
+        for r in result:
+            ssl="http"
+            if r[3]:
+                ssl="https"
+            if r[2]=="":
+                w.write(ssl + "://" + r[0] + ":" + r[1] + "|" + "notitle" + "\n")
+            else:
+                w.write(ssl+"://"+r[0]+":"+r[1]+"|"+r[2]+"\n")
+
 def byPass(qu,ot):
 
     now = datetime.now()
