@@ -87,12 +87,15 @@ def cli(thread):
 @click.option("--output",help="Output File",metavar="need")
 @click.option("--proxy",help="Proxy usag: --proxy http://127.0.0.1:8081",metavar="option")
 @click.option("--force",help="while result size is 0 still continue usage:--force=True(default False)",metavar="option",type=bool)
-def fofaquery(querystring,output,proxy="",force=False):
+@click.option("--exhoneypot",help="exclude honeypot(default=True)",default=True)
+def fofaquery(querystring,output,proxy="",force=False,exhoneypot=True):
     global forceFlag
     forceFlag=force
     click.secho("FOFA Query Start".center(100, "*"),fg="green")
     now = datetime.now()
     filename = str(datetime.strftime(now, "%Y%m%d%H%M%S"))+".txt"
+    if exhoneypot:
+        querystring=querystring+" && is_honeypot=false"
     byPass(querystring,filename)
     # print("FOFA Query Stop".center(100,"*"))
     click.secho("FOFA Query Stop".center(100,"*"),fg="green")
