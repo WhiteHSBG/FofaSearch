@@ -4,7 +4,7 @@ from multiprocessing.dummy import Pool
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-
+hp=False
 ot=""
 #输出httpcode 开关
 codeSw=True
@@ -36,6 +36,8 @@ def URLtest(input,out,fileType="url",code=False,proxy={},thread=50):
     ot=out
     global codeSw
     codeSw=code
+    global hp
+
     if fileType=="url":
 
         pool = Pool(thread)

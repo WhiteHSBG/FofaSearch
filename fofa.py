@@ -31,9 +31,10 @@ def query(qu,out):
     print("page: "+str(result['page']))
     # print("save size: "+str(result["size"]))
     click.secho("save size: "+str(result["size"]),fg="yellow")
-    if result["size"] ==0:
+    if forceFlag!=True and result["size"]==0:
         return 0
-
+    elif forceFlag==True and result["size"]==0:
+        return 1
     result=result["results"]
 
     with open(out,'a+',encoding='utf-8') as w:
@@ -62,9 +63,11 @@ def byPass(qu,ot):
         st="Querying after=\"{}\" before=\"{}\"".format(af,bf)
         click.secho(st.center(100, "*"), fg="cyan")
         quer="{} && after=\"{}\" && before=\"{}\"".format(qu,af,bf)
-        if query(quer,ot)==0:
+        c=query(quer, ot)
+        if c==0:
             return
-
+        elif c==1:
+            continue
 
 
         bf=af
@@ -86,9 +89,9 @@ def cli(thread):
 @click.option("--querystring",help="FOFA query string",metavar="need")
 @click.option("--output",help="Output File",metavar="need")
 @click.option("--proxy",help="Proxy usag: --proxy http://127.0.0.1:8081",metavar="option")
-@click.option("--force",help="while result size is 0 still continue usage:--force=True(default False)",metavar="option",type=bool)
+@click.option("--force",help="while result size is 0 still continue usage:--force=True(default False)",metavar="option",type=bool,default=True)
 @click.option("--exhoneypot",help="exclude honeypot(default=True)",default=True)
-def fofaquery(querystring,output,proxy="",force=False,exhoneypot=True):
+def fofaquery(querystring,output,proxy="",force=True,exhoneypot=True):
     global forceFlag
     forceFlag=force
     click.secho("FOFA Query Start".center(100, "*"),fg="green")
