@@ -45,7 +45,8 @@ def URLtest(input,out,fileType="url",code=False,proxy={},thread=50):
         linelist = []
         with open(input, 'r', encoding='utf-8') as f:
             # with open(output,'a+',encoding='utf-8') as o:
-            for each in f.readlines():
+            targetList=list(set(f.readlines()))
+            for each in targetList:
                 each=each.split("|")[0]
                 linelist.append(each.strip())
 
